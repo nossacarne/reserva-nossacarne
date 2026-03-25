@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserva & Bolos | Nossa Carne</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { 
+            --primary: #c0392b; 
+            --secondary: #27ae60; 
+            --accent: #f39c12;
+            --text: #2d3436;
+            --bg-overlay: rgba(255, 255, 255, 0.97); 
+        }
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            margin: 0; padding: 15px; color: var(--text);
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://static.ifood-static.com.br/image/upload/t_high/logosgde/ef733dfb-3edf-42ef-9aea-9a87b00dcbdc/202510141310_BXc1_i.png');
+            background-size: cover; background-position: center; background-attachment: fixed;
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+        }
+
+        .container { 
+            width: 100%; max-width: 450px; background: var(--bg-overlay); 
+            padding: 25px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); 
+            box-sizing: border-box;
+        }
+
+        .header { text-align: center; margin-bottom: 20px; }
+        .header img { width: 70px; border-radius: 50%; border: 3px solid var(--primary); margin-bottom: 8px; }
+        .header h2 { margin: 0; font-size: 22px; color: #333; }
+
+        .regras-box {
+            background: #fff0f0; border-left: 4px solid var(--primary);
+            padding: 12px; margin-bottom: 15px; border-radius: 8px; font-size: 11px; line-height: 1.5;
+        }
+
+        .grid-duplo { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .campo { margin-bottom: 12px; }
+        label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 12px; color: #444; }
+        
+        .input-container { position: relative; }
+        .input-container i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #888; }
+        
+        input, select { 
+            width: 100%; padding: 10px 10px 10px 38px; 
+            border: 1.5px solid #ddd; border-radius: 10px; 
+            font-size: 14px; box-sizing: border-box; outline: none;
+        }
+
+        .secao-bolo { margin-top: 10px; padding: 15px; border-radius: 12px; display: none; }
+        .modo-cortesia { background: #e6f7ed; border: 2px solid var(--secondary); }
+        .modo-encomenda { background: #fff4e6; border: 2px solid var(--accent); }
+
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 15px; font-size: 10px; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; }
+        .badge-cortesia { background: var(--secondary); color: #fff; }
+        .badge-encomenda { background: var(--accent); color: #fff; }
+
+        .btn-enviar { 
+            width: 100%; padding: 14px; background: #25d366; color: white; 
+            border: none; border-radius: 10px; font-size: 16px; font-weight: 700; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <img src="https://static.ifood-static.com.br/image/upload/t_high/logosgde/ef733dfb-3edf-42ef-9aea-9a87b00dcbdc/202510141310_BXc1_i.png" alt="Nossa Carne">
+        <h2>Reserva Nossa Carne</h2>
+    </div>
+
+    <div class="regras-box">
+        <h4><i class="fas fa-info-circle"></i> Regras Importantes</h4>
+        • <b>Reserva:</b> Seg a Qui. Sex a Dom: Ordem de chegada.<br>
+        • <b>Cortesia:</b> Mínimo 10 pessoas (Presença obrigatória).<br>
+        • <b>Limite de Bolo:</b> Máximo 3kg por mesa.
+    </div>
+
+    <form id="reservaForm">
+        <div class="campo">
+            <label>Seu Nome</label>
+            <div class="input-container">
+                <i class="fas fa-user"></i>
+                <input type="text" id="nome" placeholder="Nome completo" required>
+            </div>
+        </div>
+
+        <div class="grid-duplo">
+            <div class="campo">
+                <label>Data</label>
+                <div class="input-container">
+                    <i class="fas fa-calendar-alt"></i>
+                    <input type="date" id="data" required onchange="validarFluxo()">
+                </div>
+            </div>
+            <div class="campo">
+                <label>Horário</label>
+                <div class="input-container">
+                    <i class="fas fa-clock"></i>
+                    <input type="time" id="horario" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="campo">
+            <label>Nº de Convidados</label>
+            <div class="input-container">
+                <i class="fas fa-users"></i>
+                <input type="number" id="pessoas" min="1" max="50" placeholder="Ex: 12" required onchange="validarFluxo()">
+            </div>
+        </div>
+
+        <div class="campo">
+            <label>Deseja Bolo?</label>
+            <div class="input-container">
+                <i class="fas fa-birthday-cake"></i>
+                <select id="querBolo" onchange="validarFluxo()">
+                    <option value="nao">Não, apenas a mesa</option>
+                    <option value="sim">Sim, desejo bolo 🎂</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="painelBolo" class="secao-bolo">
+            <div id="tipoBoloBadge" class="badge"></div>
+            
+            <div class="campo">
+                <label>Sabor do Bolo</label>
+                <div class="input-container">
+                    <i class="fas fa-list"></i>
+                    <select id="sabor">
+                        <option value="Mousse de Coco">Mousse de Coco</option>
+                        <option value="Ninho com Morango">Ninho com Morango</option>
+                        <option value="Coco com Doce de Leite">Coco com Doce de Leite</option>
+                        <option value="Mousse de Chocolate">Mousse de Chocolate</option>
+                        <option value="Maracujá com Chocolate">Maracujá com Chocolate</option>
+                        <option value="Ninho com Nutella">Ninho com Nutella</option>
+                        <option value="Brigadeiro de Chocolate">Brigadeiro de Chocolate</option>
+                        <option value="Brigadeiro de Ninho">Brigadeiro de Ninho</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label id="labelKg">Quilos (Máx 3kg)</label>
+                <div class="input-container">
+                    <i class="fas fa-weight-hanging"></i>
+                    <input type="number" id="kg" value="0" min="0" max="3" onchange="if(this.value>3)this.value=3">
+                </div>
+            </div>
+        </div>
+
+        <button type="button" id="btnEnviar" class="btn-enviar" onclick="enviarWhatsApp()">
+            <i class="fab fa-whatsapp"></i> CONCLUIR RESERVA
+        </button>
+    </form>
+</div>
+
+<script>
+    const SEU_TELEFONE = "5511967105333";
+    document.getElementById('data').min = new Date().toISOString().split('T')[0];
+
+    function validarFluxo() {
+        const dataVal = document.getElementById('data').value;
+        const pessoas = parseInt(document.getElementById('pessoas').value) || 0;
+        const querBolo = document.getElementById('querBolo').value;
+        const painelBolo = document.getElementById('painelBolo');
+        const badge = document.getElementById('tipoBoloBadge');
+        const btn = document.getElementById('btnEnviar');
+
+        if(!dataVal) return;
+        const dataObj = new Date(dataVal + 'T12:00:00');
+        const eBloqueado = [0, 5, 6].includes(dataObj.getDay());
+
+        if(eBloqueado) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-lock"></i> RESERVAS: SEG A QUI';
+            painelBolo.style.display = 'none';
+        } else {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fab fa-whatsapp"></i> CONCLUIR RESERVA';
+            if(querBolo === 'sim') {
+                painelBolo.style.display = 'block';
+                if(pessoas >= 10) {
+                    painelBolo.className = 'secao-bolo modo-cortesia';
+                    badge.innerText = '🎁 Cortesia Liberada';
+                    badge.className = 'badge badge-cortesia';
+                } else {
+                    painelBolo.className = 'secao-bolo modo-encomenda';
+                    badge.innerText = '🛒 Encomenda (R$ 95/kg)';
+                    badge.className = 'badge badge-encomenda';
+                }
+            } else { painelBolo.style.display = 'none'; }
+        }
+    }
+
+    function enviarWhatsApp() {
+        const nome = document.getElementById('nome').value;
+        const dataRaw = document.getElementById('data').value;
+        const horario = document.getElementById('horario').value;
+        const pessoas = document.getElementById('pessoas').value;
+        const querBolo = document.getElementById('querBolo').value;
+        
+        if(!nome || !dataRaw || !horario || !pessoas) {
+            alert("Preencha todos os campos!");
+            return;
+        }
+
+        const dataBr = dataRaw.split('-').reverse().join('/');
+        
+        // Texto da Mensagem - Usando codificação para Emojis
+        let texto = `🥩 *RESERVA: NOSSA CARNE* 🥩\n\n`;
+        texto += `👤 *CLIENTE:* ${nome}\n`;
+        texto += `📅 *DATA:* ${dataBr}\n`;
+        texto += `⏰ *HORA:* ${horario}\n`;
+        texto += `👥 *CONVIDADOS:* ${pessoas} pessoas\n`;
+
+        if (querBolo === 'sim') {
+            const sabor = document.getElementById('sabor').value;
+            const kg = document.getElementById('kg').value;
+            const ehCortesia = (parseInt(pessoas) >= 10);
+            
+            texto += `\n──────────────────\n`;
+            texto += `🎂 *DETALHES DO BOLO* 🎂\n`;
+            texto += `✨ *Tipo:* ${ehCortesia ? 'CORTESIA 🎁' : 'ENCOMENDA 🛒'}\n`;
+            texto += `🍰 *Sabor:* ${sabor}\n`;
+            texto += `⚖️ *Peso:* ${kg}kg ${ehCortesia ? 'extra' : ''} (Máx 3kg)\n`;
+            texto += `──────────────────\n`;
+        }
+
+        texto += `\n_Aguardando confirmação da casa..._ 🏁`;
+
+        // O segredo está aqui: encodeURIComponent limpa os emojis para a URL do WhatsApp
+        const url = `https://wa.me/${SEU_TELEFONE}?text=${encodeURIComponent(texto)}`;
+        window.open(url, '_blank');
+    }
+</script>
+
+</body>
+</html>
